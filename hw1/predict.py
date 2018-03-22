@@ -78,7 +78,6 @@ for i in range(4680):
 ans=[]
 NormM=NormMatrix()
 for i in range(260):
-    #計算第I筆資料的值
     Xi=data.values[18*i:18*i+18,:]
     #print(Xi,'Xi',i,' I')
     NormM=NormM.reshape(18,3)
