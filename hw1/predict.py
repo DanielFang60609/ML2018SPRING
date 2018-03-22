@@ -61,7 +61,7 @@ def NormMatrix():
 
 #input='./test.csv'
 input=sys.argv[1]
-data = pd.read_csv(input,encoding = "ANSI",header=None)
+data = pd.read_csv(input,encoding = "gbk",header=None)
 
 #selectCol=[0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
 data=data.iloc[:,8:11]
