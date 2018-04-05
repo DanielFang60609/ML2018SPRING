@@ -27,17 +27,17 @@ def sigmoid(x):
 
 def NormMatrix():
     NM=[]
-    NM.append(50)
+    NM.append(50.0)
     for i in range(9):
-        NM.append(1)
-    NM.append(10000000000000)
+        NM.append(1.0)
+    NM.append(10000000000000.0)
     for i in range(67):
-        NM.append(1)
-    NM.append(10000)
-    NM.append(3000)
-    NM.append(70)
+        NM.append(1.0)
+    NM.append(10000.0)
+    NM.append(3000.0)
+    NM.append(70.0)
     for i in range(42):
-        NM.append(1)
+        NM.append(1.0)
     print(NM,'NM=?')
     NM=np.asarray(NM)
     print(NM.shape)
