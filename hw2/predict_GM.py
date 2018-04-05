@@ -64,7 +64,6 @@ for i in range(4680):
 ans=[]
 NormM=NormMatrix()
 for i in range(len(data)):
-    #計算第I筆資料的值
     Xi=data.values[i]
     X2=np.zeros(24)
     #print(Xi,'Xi',i,' I')
