@@ -115,7 +115,7 @@ for i in range(len(data)):
 #    print(pm25,'pm25')
     #print(i)
     income=sigmoid(income)
-    if income>0.5:
+    if income>0.45:
         income=1
     else:
         income=0
