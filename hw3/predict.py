@@ -23,7 +23,7 @@ print('import end')
 
 
 testDataPath=sys.argv[1]
-modelPath='./_bestModel?dl=1'
+modelPath='./_bestModel?dl=1%0D'
 outputpath=sys.argv[2]
 
 
