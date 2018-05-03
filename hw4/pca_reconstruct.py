@@ -2,16 +2,24 @@ import numpy as np
 import skimage
 from skimage import io
 import sys
+import os
 
 #import matplotlib.pyplot as plt
 
 print('import end')
 inputpath=sys.argv[1]
 testimage=[]
+
+
+#read file
+filepath=os.listdir(inputpath)
+for f in filepath:
+     testimage.append(skimage.io.imread(os.path.join(inputpath,f),None))
+"""
 for i in range(415):
     path=inputpath+str(i)+'.jpg'
     testimage.append(skimage.io.imread(path))
-
+"""
     #plt.imshow(testimage[i])
     #plt.show()
 
@@ -90,7 +98,7 @@ print("RECO!")
 meanImage=meanImage.flatten()
 #Reconstruct 4 picture 0 25 75 100
 
-inputNum=sys.argv[2]
+inputNum=int(sys.argv[2])
 RecoImg=testimage[inputNum].flatten()-meanImage
 
 w=np.dot(RecoImg,U[:,:4])
@@ -100,7 +108,7 @@ RecoImg=RecoImg/np.max(RecoImg)
 RecoImg=(RecoImg*255).astype(np.uint8)
 
 savePath='./reconstruction.png'
-skimage.io.imsave(savePath,RecoImg)
+skimage.io.imsave(savePath,RecoImg.reshape(600,600,3))
 """
 plt.imshow(RecoImg.reshape(600,600,3))
 plt.show()
