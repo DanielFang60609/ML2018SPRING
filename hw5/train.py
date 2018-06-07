@@ -292,9 +292,9 @@ print(Label,'label')
 print(Label.shape,' label shape')
 
 
-trainDataNoLabel=readData(trainingNoLabelDataPath,None)
-trainDataNoLabel=trainDataNoLabel.values
-trainDataNoLabel,Label2=sepData(trainDataNoLabel)
+#trainDataNoLabel=readData(trainingNoLabelDataPath,None)
+#trainDataNoLabel=trainDataNoLabel.values
+#trainDataNoLabel,Label2=sepData(trainDataNoLabel)
 
 print(trainDataNoLabel)
 print(trainDataNoLabel.shape,'shape tdnl')
@@ -302,8 +302,8 @@ print(trainDataNoLabel[0])
 print(Label2.shape,' Label2 shape')
 
 
-trainDataLabel=np.append(trainDataLabel,trainDataNoLabel,axis=0)
-Label=np.append(Label,Label2,axis=0)
+#trainDataLabel=np.append(trainDataLabel,trainDataNoLabel,axis=0)
+#Label=np.append(Label,Label2,axis=0)
 
 print(trainDataLabel)
 print(trainDataLabel.shape,'shape')
