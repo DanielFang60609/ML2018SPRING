@@ -5,3 +5,13 @@ Team:NTU_r06921058_95度的顯卡/R06921058 方浩宇 B04501127 凌于凱 D06921
 Package:
 
 keras=2.0.8 numpy pandas scipy sklearn librosa 
+
+
+Test方式:
+bash test.sh [output path]
+
+Train方式:
+先用bash data.sh
+下載預先處理好的資料
+
+然後bash train.sh [path of train.csv]
