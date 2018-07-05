@@ -17,8 +17,12 @@ Train方式:
 然後bash train.sh [path of train.csv]
 
 使用其他的Param Train的方式:
+
 先使用bash data.sh下載檔案
+
 然後使用bash download_dataset.sh下載Raw data
+
 在src中的Train.py 修改參數
+
 使用bash train.sh [path of train.csv]
 
