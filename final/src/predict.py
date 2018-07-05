@@ -133,13 +133,13 @@ def flatten_list(lists):
 
 
 
-def main(savepath,modelpath):
+def main(savepath):
 
     timeStart=time.time()
 
     col_name=np.load('colName.npy')
     print(col_name,'col name')
-    fileName=os.listdir("./audio_test/audio_test")
+    #fileName=os.listdir("./audio_test/audio_test")
     samplerate=44100
     hop=160
     _fmin=20
@@ -149,6 +149,7 @@ def main(savepath,modelpath):
     targetMel='./sr'+str(samplerate)+'hops'+str(hop)+'bands'+str(bands)+'fft_fmin_fmax'+str(_nfft)+'_'+str(_fmin)+'_'+str(_fmax)+'HoptestData.npy'
     targetID='./sr'+str(samplerate)+'hops'+str(hop)+'bands'+str(bands)+'fft_fmin_fmax'+str(_nfft)+'_'+str(_fmin)+'_'+str(_fmax)+'HoptestID.npy'
     loadNp=True
+    """
     if os.path.exists(targetMel) and os.path.exists(targetID) and loadNp==True:
         #features=np.load(targetMel)
         dataID=np.load(targetID)
@@ -182,10 +183,12 @@ def main(savepath,modelpath):
            
         timeEnd=time.time()
         print("Using ",timeEnd-timeMid,"time for Load")
-        """
+	"""        
+	"""
         with open('TestPre', 'wb') as handle:
                 pickle.dump(log_specgrams, handle, protocol=pickle.HIGHEST_PROTOCOL)
         """
+	"""
         temp=len(log_specgrams)
         #uni_length = get_2d_mode_length(log_specgrams)
         uni_length=512
@@ -200,17 +203,17 @@ def main(savepath,modelpath):
 
         np.save(targetMel,features)
         np.save(targetID,dataID)
-
+    """
    
 
     
-
+    dataID=np.load('./dataID.npy')
 
     #print(features.shape,' features shape')
     #model ensemble
     onehotans=np.zeros((33586,41))
     countModel=0
-    for m in modelpath:
+    for m in range(17):
         """
         model=load_model(m)
 
@@ -237,9 +240,8 @@ def main(savepath,modelpath):
         tempAns=model.predict_generator(test_gen,verbose=1,steps=step)
         """
         #np.save('./predict/'+str(countModel),tempAns)
-        tempAns=np.load('./predict_test/'+str(countModel)+'.npy')
-        print(countModel,'--------------------')
-        countModel+=1
+        tempAns=np.load('./'+str(m)+'.npy')
+        print(m,'--------------------')
         
         onehotans+=tempAns
         """
@@ -248,36 +250,6 @@ def main(savepath,modelpath):
         """    
 
 
-    
-    """
-    #model ensemble2 
-    for m in modelpath2:
-        model=load_model(m)
-        #Image generator2
-        
-        print('im gen2')
-        
-        with open('./logCRNN_512/Test_data_gen_6', 'rb') as handle:
-            test_datagen2=pickle.load(handle)
-        
-        test_gen2=test_datagen2.flow(
-            features,
-            batch_size=32,
-            shuffle=False
-        )
-        print('image gen 2 end')
-        print(m,'m')
-
-        model.summary()
-
-        step=int(features.shape[0]/32)+1
-        print(step,'Step')
-        tempAns+=model.predict_generator(test_gen2,verbose=1,steps=step)
-        onehotans+=tempAns
-        for i in range(41):
-            print(tempAns[0][i])
-
-    """
     for i in range(41):
         print(onehotans[0][i])
 
@@ -329,23 +301,19 @@ def main(savepath,modelpath):
 
 
 savepath='./test_self_11_44100_mel_hop_33model_ensemble.csv'
-"""
-modelpath=['./logVGG/model.0469-0.8970.h5','./logVGG/modelBest.h5','./logVGG/model.0489-0.8950.h5',
-'./logVGG/model.0439-0.8953.h5','./logVGG/model.0429-0.9042.h5','./logVGG/model.0399-0.8979.h5',
-'./logVGG/model.0389-0.8869.h5','./logVGG/model.0379-0.8857.h5'
-]
-modelpath2=['./logCRNN_512/modelBest.h5','./logCRNN_512/model.0449-0.8701.h5']
-"""
-files=os.listdir("./modelEnsemble")
+
+#files=os.listdir("./modelEnsemble")
 #print(files)
 print(type(files))
 print(len(files))
 modelpath=[]
+"""
 for i in files:
     fname="./modelEnsemble/"+i
     print(fname)
     modelpath.append(fname)
+"""
 #print(trainCsv,'t csv')
 #print(type(trainCsv),'type t csv')
 
-main(savepath,modelpath)
+main(savepath)
