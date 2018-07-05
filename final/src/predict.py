@@ -57,7 +57,7 @@ def unify_hop_length(data,uni_length,hop_distance=1):
         #print(data[i].shape,i,'data i shape')
         if data[i].shape[1]<uni_length:
             L = abs(data[i].shape[1] - uni_length)
-            unified  = np.pad(data[i], ((0, 0), (0, L)), 'constant')
+            unified  = np.pad(data[i], ((0, 0), (0, L)), 'wrap')
             #print(unified.shape,'uni shape')
             newData.append(unified)
             newLabel.append(countID)
@@ -133,25 +133,24 @@ def flatten_list(lists):
 
 
 
-def main(savepath):
+def main(savepath,modelpath):
 
     timeStart=time.time()
 
     col_name=np.load('colName.npy')
     print(col_name,'col name')
-    #fileName=os.listdir("./audio_test/audio_test")
+    fileName=os.listdir("./audio_test/audio_test")
     samplerate=44100
     hop=160
     _fmin=20
     _fmax=16000
     _nfft=400
     bands=64
-    targetMel='./sr'+str(samplerate)+'hops'+str(hop)+'bands'+str(bands)+'fft_fmin_fmax'+str(_nfft)+'_'+str(_fmin)+'_'+str(_fmax)+'HoptestData.npy'
-    targetID='./sr'+str(samplerate)+'hops'+str(hop)+'bands'+str(bands)+'fft_fmin_fmax'+str(_nfft)+'_'+str(_fmin)+'_'+str(_fmax)+'HoptestID.npy'
+    targetMel='./sr'+str(samplerate)+'hops'+str(hop)+'bands'+str(bands)+'fft_fmin_fmax'+str(_nfft)+'_'+str(_fmin)+'_'+str(_fmax)+'HopWraptestData.npy'
+    targetID='./sr'+str(samplerate)+'hops'+str(hop)+'bands'+str(bands)+'fft_fmin_fmax'+str(_nfft)+'_'+str(_fmin)+'_'+str(_fmax)+'HopWraptestID.npy'
     loadNp=True
-    """
     if os.path.exists(targetMel) and os.path.exists(targetID) and loadNp==True:
-        #features=np.load(targetMel)
+        features=np.load(targetMel)
         dataID=np.load(targetID)
         print('load success')
     else:
@@ -166,7 +165,7 @@ def main(savepath):
             fn="./audio_test/audio_test/"+f
             sound_clip,sr=lb.load(fn,sr=samplerate)
             count+=1
-            if count % 10 ==0:
+            if count % 100 ==0:
                 print(count,'--------------------')
 
 
@@ -183,12 +182,10 @@ def main(savepath):
            
         timeEnd=time.time()
         print("Using ",timeEnd-timeMid,"time for Load")
-	"""        
-	"""
+        """
         with open('TestPre', 'wb') as handle:
                 pickle.dump(log_specgrams, handle, protocol=pickle.HIGHEST_PROTOCOL)
         """
-	"""
         temp=len(log_specgrams)
         #uni_length = get_2d_mode_length(log_specgrams)
         uni_length=512
@@ -203,17 +200,17 @@ def main(savepath):
 
         np.save(targetMel,features)
         np.save(targetID,dataID)
-    """
+
    
 
     
-    dataID=np.load('./dataID.npy')
 
-    #print(features.shape,' features shape')
+
+    print(features.shape,' features shape')
     #model ensemble
     onehotans=np.zeros((33586,41))
     countModel=0
-    for m in range(17):
+    for m in modelpath:
         """
         model=load_model(m)
 
@@ -221,7 +218,7 @@ def main(savepath):
         
         print('im gen')
         
-        with open('./log/Test_data_gen_11', 'rb') as handle:
+        with open('./log44100VGG_con_last/Test_data_gen_11', 'rb') as handle:
             test_datagen=pickle.load(handle)
         
         test_gen=test_datagen.flow(
@@ -238,18 +235,20 @@ def main(savepath):
         step=int(features.shape[0]/64)+1
         print(step,'Step')
         tempAns=model.predict_generator(test_gen,verbose=1,steps=step)
+        
+        np.save('./predict/'+str(countModel),tempAns)
         """
-        #np.save('./predict/'+str(countModel),tempAns)
-        tempAns=np.load('./'+str(m)+'.npy')
-        print(m,'--------------------')
+        tempAns=np.load('./predict/'+str(countModel)+'.npy')
+        print(countModel,'--------------------')
+        countModel+=1
         
         onehotans+=tempAns
-        """
         for i in range(41):
             print(tempAns[0][i])
-        """    
 
 
+    
+    
     for i in range(41):
         print(onehotans[0][i])
 
@@ -264,56 +263,43 @@ def main(savepath):
     for i in range(dataID.shape[0]):
         sumArg[dataID[i]]+=ans[i]
     ans=np.argsort(sumArg)
-    print(sumArg[0][ans[0][40]],'sumarg 1')
-    print(sumArg[0][ans[0][39]],'sumarg 2')
-    a=sumArg[0][ans[0][40]]
-    b=sumArg[0][ans[0][39]]
-    print((a>b).all)
     for i in range(ans.shape[0]):
-        a=sumArg[i][ans[i][40]]
-        b=sumArg[i][ans[i][39]]
-        #c=np.array(15.0)
-        #print( (a > 2*b).all,'a > 2*b).all')
-        #print((a>c).all)
-        if  a > 4*b:
-            temp=[]
-            temp.append(fileName[i])
-            #temp.append(col_name[ans[i][40]]+' '+col_name[ans[i][39]]+' '+col_name[ans[i][38]])
-            temp.append(col_name[ans[i][40]])
-            
-            answer.append(temp)
-        #else:
-        #    print(a,b,i,'a b')
+        temp=[]
+        temp.append(fileName[i])
+        temp.append(col_name[ans[i][40]]+' '+col_name[ans[i][39]]+' '+col_name[ans[i][38]])
+        answer.append(temp)
     answer=np.array(answer)
-    
     print(answer.shape,'answer shape')      
     print(answer)
-    
     col = ['fname', 'label']
     df_ans = pd.DataFrame(answer, index = None,columns=col)
     print(df_ans)
     df_ans.to_csv(savepath, index=False,columns=None)
     print('output success!, path is :',savepath)
-    
+
         
 
 
 
 
-savepath='./test_self_11_44100_mel_hop_33model_ensemble.csv'
-
-#files=os.listdir("./modelEnsemble")
+savepath='./output_13_44100_mel_hop_17model_wrap_self_ensemble.csv'
+"""
+modelpath=['./logVGG/model.0469-0.8970.h5','./logVGG/modelBest.h5','./logVGG/model.0489-0.8950.h5',
+'./logVGG/model.0439-0.8953.h5','./logVGG/model.0429-0.9042.h5','./logVGG/model.0399-0.8979.h5',
+'./logVGG/model.0389-0.8869.h5','./logVGG/model.0379-0.8857.h5'
+]
+modelpath2=['./logCRNN_512/modelBest.h5','./logCRNN_512/model.0449-0.8701.h5']
+"""
+files=os.listdir("./modelEnsembleSelf")
 #print(files)
 print(type(files))
 print(len(files))
 modelpath=[]
-"""
 for i in files:
-    fname="./modelEnsemble/"+i
+    fname="./modelEnsembleSelf/"+i
     print(fname)
     modelpath.append(fname)
-"""
 #print(trainCsv,'t csv')
 #print(type(trainCsv),'type t csv')
 
-main(savepath)
+main(savepath,modelpath)
